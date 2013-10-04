@@ -22,6 +22,7 @@
 IMPLEMENT_DYNCREATE(CosgViewDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CosgViewDoc, CDocument)
+	ON_COMMAND(ID_EDIT_PREFERENCES, &CosgViewDoc::OnEditPreferences)
 END_MESSAGE_MAP()
 
 
@@ -146,4 +147,10 @@ BOOL CosgViewDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// TODO:  Add your specialized creation code here
 
 	return TRUE;
+}
+
+
+void CosgViewDoc::OnEditPreferences()
+{
+	// TODO: Add your command handler code here
 }
