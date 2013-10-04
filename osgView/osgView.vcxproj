@@ -174,6 +174,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="out.txt" />
     <None Include="ReadMe.txt" />
     <None Include="res\osgView.ico" />
     <None Include="res\osgView.rc2" />
@@ -186,26 +187,32 @@
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFC_OSG.h" />
+    <ClInclude Include="MovementDialog.h" />
     <ClInclude Include="osgView.h" />
     <ClInclude Include="osgViewDoc.h" />
     <ClInclude Include="osgViewView.h" />
+    <ClInclude Include="PreferenceDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StereoDialog.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFC_OSG.cpp" />
+    <ClCompile Include="MovementDialog.cpp" />
     <ClCompile Include="osgView.cpp" />
     <ClCompile Include="osgViewDoc.cpp" />
     <ClCompile Include="osgViewView.cpp" />
+    <ClCompile Include="PreferenceDialog.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StereoDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="osgView.rc" />

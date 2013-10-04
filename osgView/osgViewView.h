@@ -52,6 +52,7 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnEditPreferences();
 };
 
 #ifndef _DEBUG  // debug version in osgViewView.cpp

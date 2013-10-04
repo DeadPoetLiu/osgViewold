@@ -8,10 +8,10 @@
 #ifndef SHARED_HANDLERS
 #include "osgView.h"
 #endif
-
+#include <fstream>
 #include "osgViewDoc.h"
 #include "osgViewView.h"
-
+#include "PreferenceDialog.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP(CosgViewView, CView)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_KEYDOWN()
+	ON_COMMAND(ID_EDIT_PREFERENCES, &CosgViewView::OnEditPreferences)
 END_MESSAGE_MAP()
 
 // CosgViewView construction/destruction
@@ -205,4 +206,45 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		mOSG->getViewer()->getCamera()->getDisplaySettings()->setStereoMode(osg::DisplaySettings::HORIZONTAL_SPLIT);
     }
 	
+}
+
+
+void CosgViewView::OnEditPreferences()
+{
+	//	// TODO: Add your command handler code here
+	CPreferenceDialog aDlg; // Create a local dialog object
+// Display the dialog as modal
+
+    std::ofstream out;
+	out.open("out.txt",std::ofstream::out|std::ofstream::app);
+	out<<"OnEditPreferences"<<std::endl;
+	if(aDlg.DoModal() == IDOK)
+	{   out<<aDlg.stereo.stereoMode<<std::endl;
+		mOSG->getViewer()->getCamera()->setDisplaySettings(new osg::DisplaySettings()); 
+        auto setting=mOSG->getViewer()->getCamera()->getDisplaySettings();
+		setting->setStereo(true);
+		switch(aDlg.stereo.stereoMode){
+		case 0:
+			setting->setStereoMode(osg::DisplaySettings::QUAD_BUFFER);
+			break;
+		case 1:
+			setting->setStereoMode(osg::DisplaySettings::HORIZONTAL_SPLIT);
+			break;
+		case 2:
+			setting->setStereoMode(osg::DisplaySettings::VERTICAL_SPLIT);
+			break;
+		case 3:
+			setting->setStereoMode(osg::DisplaySettings::LEFT_EYE);
+			break;
+		case 4:
+			setting->setStereoMode(osg::DisplaySettings::RIGHT_EYE);
+			break;
+		default:
+			break;
+
+		}
+    }else{
+		out<<"cancel"<<std::endl;
+	}
+	out.close();
 }

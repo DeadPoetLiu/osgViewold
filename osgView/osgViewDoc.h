@@ -48,4 +48,5 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	//afx_msg void OnEditPreferences();
 };

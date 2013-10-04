@@ -22,7 +22,7 @@
 IMPLEMENT_DYNCREATE(CosgViewDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CosgViewDoc, CDocument)
-	ON_COMMAND(ID_EDIT_PREFERENCES, &CosgViewDoc::OnEditPreferences)
+	//ON_COMMAND(ID_EDIT_PREFERENCES, &CosgViewDoc::OnEditPreferences)
 END_MESSAGE_MAP()
 
 
@@ -150,7 +150,10 @@ BOOL CosgViewDoc::OnOpenDocument(LPCTSTR lpszPathName)
 }
 
 
-void CosgViewDoc::OnEditPreferences()
-{
-	// TODO: Add your command handler code here
-}
+//void CosgViewDoc::OnEditPreferences()
+//{
+//	// TODO: Add your command handler code here
+//	CPreferenceDialog aDlg; // Create a local dialog object
+//// Display the dialog as modal
+//    aDlg.DoModal(); 
+//}
