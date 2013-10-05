@@ -26,4 +26,5 @@ public:
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
 	CTabCtrl tab;
 	virtual BOOL OnInitDialog();
+	virtual void OnOK();
 };

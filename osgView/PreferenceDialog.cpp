@@ -73,3 +73,12 @@ void CPreferenceDialog::UpdateVisibleWindow()
    movement.ShowWindow(current == 1 ? SW_SHOW : SW_HIDE);
 
 }
+
+void CPreferenceDialog::OnOK()
+{
+	// TODO: Add your specialized code here and/or call the base class
+	
+
+	CDialog::OnOK();
+	stereo.OK();
+}

@@ -73,6 +73,9 @@
     <ClInclude Include="StereoDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="parameter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="osgView.cpp">

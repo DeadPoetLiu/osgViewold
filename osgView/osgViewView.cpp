@@ -214,16 +214,18 @@ void CosgViewView::OnEditPreferences()
 	//	// TODO: Add your command handler code here
 	CPreferenceDialog aDlg; // Create a local dialog object
 // Display the dialog as modal
-
+	aDlg.stereo.sp=sp;
     std::ofstream out;
 	out.open("out.txt",std::ofstream::out|std::ofstream::app);
 	out<<"OnEditPreferences"<<std::endl;
 	if(aDlg.DoModal() == IDOK)
-	{   out<<aDlg.stereo.stereoMode<<std::endl;
+    {   
+		this->sp=aDlg.stereo.sp;
+		//out<<aDlg.stereo.stereoMode<<std::endl;
 		mOSG->getViewer()->getCamera()->setDisplaySettings(new osg::DisplaySettings()); 
         auto setting=mOSG->getViewer()->getCamera()->getDisplaySettings();
-		setting->setStereo(true);
-		switch(aDlg.stereo.stereoMode){
+		setting->setStereo(sp.stereoDisplay);
+		switch(sp.stereoMode){
 		case 0:
 			setting->setStereoMode(osg::DisplaySettings::QUAD_BUFFER);
 			break;
@@ -243,6 +245,11 @@ void CosgViewView::OnEditPreferences()
 			break;
 
 		}
+		setting->setScreenWidth(sp.screenWidth/100);
+		setting->setScreenHeight(sp.screenHeight/100);
+		setting->setScreenDistance(sp.screenDistance);
+		setting->setEyeSeparation(sp.eyeSeparation/1000);
+
     }else{
 		out<<"cancel"<<std::endl;
 	}

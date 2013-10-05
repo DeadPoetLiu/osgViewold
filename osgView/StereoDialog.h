@@ -1,5 +1,5 @@
 #pragma once
-
+#include "parameter.h"
 
 // CStereoDialog dialog
 
@@ -10,12 +10,12 @@ class CStereoDialog : public CDialog
 public:
 	CStereoDialog(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CStereoDialog();
-	int stereoMode;
+	StereoParameter  sp;
 // Dialog Data
 	enum { IDD = IDD_Stereo };
-
-public:
+	void OK();
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
+	
 	DECLARE_MESSAGE_MAP()
 };

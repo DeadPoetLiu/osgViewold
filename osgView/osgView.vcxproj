@@ -191,6 +191,7 @@
     <ClInclude Include="osgView.h" />
     <ClInclude Include="osgViewDoc.h" />
     <ClInclude Include="osgViewView.h" />
+    <ClInclude Include="parameter.h" />
     <ClInclude Include="PreferenceDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />

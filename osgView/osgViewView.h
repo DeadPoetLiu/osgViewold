@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "parameter.h"
 #include "MFC_OSG.h"
 class CosgViewView : public CView
 {
@@ -27,6 +27,7 @@ protected:
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 	 cOSG* mOSG;
+	 StereoParameter sp;
 	 bool stereo;
     //HANDLE mThreadHandle;
     CRenderingThread* mThreadHandle;
