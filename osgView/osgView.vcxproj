@@ -184,6 +184,7 @@
     <None Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="all.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFC_OSG.h" />

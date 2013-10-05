@@ -30,14 +30,14 @@ public:
     //static void Render(void* ptr);
 
     osgViewer::Viewer* getViewer() { return mViewer; }
-
+	 osg::ref_ptr<osg::Node> mModel;
 private:
     bool mDone;
     std::string m_ModelName;
     HWND m_hWnd;
     osgViewer::Viewer* mViewer;
     osg::ref_ptr<osg::Group> mRoot;
-    osg::ref_ptr<osg::Node> mModel;
+   
     osg::ref_ptr<osgGA::TrackballManipulator> trackball;
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator;
 };

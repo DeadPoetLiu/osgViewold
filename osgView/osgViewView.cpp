@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "all.h"
 // SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
 // and search filter handlers and allows sharing of document code with that project.
 #ifndef SHARED_HANDLERS
@@ -12,6 +13,7 @@
 #include "osgViewDoc.h"
 #include "osgViewView.h"
 #include "PreferenceDialog.h"
+#include <osg/ShadeModel> 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -33,6 +35,18 @@ BEGIN_MESSAGE_MAP(CosgViewView, CView)
 	ON_WM_ERASEBKGND()
 	ON_WM_KEYDOWN()
 	ON_COMMAND(ID_EDIT_PREFERENCES, &CosgViewView::OnEditPreferences)
+	ON_COMMAND(ID_RENDERINGMODE_POINTCLOUD, &CosgViewView::OnRenderingmodePointcloud)
+	ON_COMMAND(ID_RENDERINGMODE_TEXTURE, &CosgViewView::OnRenderingmodeTexture)
+	ON_COMMAND(ID_RENDERINGMODE_WIREFRAME, &CosgViewView::OnRenderingmodeWireframe)
+	ON_COMMAND(ID_RENDERINGMODE_FLATLINES, &CosgViewView::OnRenderingmodeFlatlines)
+	ON_COMMAND(ID_RENDERINGMODE_FLAT, &CosgViewView::OnRenderingmodeFlat)
+	ON_COMMAND(ID_RENDERINGMODE_SMOOTH, &CosgViewView::OnRenderingmodeSmooth)
+	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_POINTCLOUD, &CosgViewView::OnUpdateRenderingmodePointcloud)
+	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_TEXTURE, &CosgViewView::OnUpdateRenderingmodeTexture)
+	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_WIREFRAME, &CosgViewView::OnUpdateRenderingmodeWireframe)
+	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_FLATLINES, &CosgViewView::OnUpdateRenderingmodeFlatlines)
+	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_FLAT, &CosgViewView::OnUpdateRenderingmodeFlat)
+	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_SMOOTH, &CosgViewView::OnUpdateRenderingmodeSmooth)
 END_MESSAGE_MAP()
 
 // CosgViewView construction/destruction
@@ -215,9 +229,9 @@ void CosgViewView::OnEditPreferences()
 	CPreferenceDialog aDlg; // Create a local dialog object
 // Display the dialog as modal
 	aDlg.stereo.sp=sp;
-    std::ofstream out;
+   /* std::ofstream out;
 	out.open("out.txt",std::ofstream::out|std::ofstream::app);
-	out<<"OnEditPreferences"<<std::endl;
+	out<<"OnEditPreferences"<<std::endl;*/
 	if(aDlg.DoModal() == IDOK)
     {   
 		this->sp=aDlg.stereo.sp;
@@ -250,8 +264,136 @@ void CosgViewView::OnEditPreferences()
 		setting->setScreenDistance(sp.screenDistance);
 		setting->setEyeSeparation(sp.eyeSeparation/1000);
 
-    }else{
+    }/*else{
 		out<<"cancel"<<std::endl;
 	}
-	out.close();
+	out.close();*/
+}
+
+void CosgViewView::setMode(Modes m){
+	mode=m;
+	osg::StateSet* stateset = mOSG->mModel->getOrCreateStateSet();
+	osg::PolygonMode::Mode em;
+	osg::ShadeModel::Mode sm;
+	switch(m){
+	case Modes::pointCloud:
+		 em=osg::PolygonMode::POINT ;
+		break;
+	case Modes::texture:
+		em=osg::PolygonMode::FILL;
+		break;
+	case Modes::wireframe:
+		em=osg::PolygonMode::LINE;
+		break;
+	case Modes::flat:
+		sm=osg::ShadeModel::FLAT;
+		break;
+	case Modes::flatLines:
+		sm=osg::ShadeModel::Mode::FLAT;
+		break;
+	case Modes::smooth:
+		sm=osg::ShadeModel::SMOOTH;
+		break;
+	}
+
+	
+	if(m== Modes::pointCloud|| m== Modes::texture||m== Modes::wireframe){
+		osg::PolygonMode *pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, em );
+        stateset->setAttributeAndModes( pm, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+	}
+	else{
+		osg::ShadeModel* smp = new osg::ShadeModel(); 
+		smp->setMode(sm);
+		stateset->setAttribute(smp);
+	
+
+	}
+
+}
+void CosgViewView::OnRenderingmodePointcloud()
+{
+	setMode(Modes::pointCloud);
+	// TODO: Add your command handler code here
+	/*mode=Modes::pointCloud;
+	osg::StateSet* stateset = mOSG->mModel->getOrCreateStateSet();
+	   osg::PolygonMode *pm = new osg::PolygonMode(
+            osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::POINT );
+        stateset->setAttributeAndModes( pm, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);*/
+}
+
+
+void CosgViewView::OnRenderingmodeTexture()
+{
+	// TODO: Add your command handler code here
+	setMode(Modes::texture);
+}
+
+
+void CosgViewView::OnRenderingmodeWireframe()
+{
+	// TODO: Add your command handler code here
+	setMode(Modes::wireframe);
+}
+
+
+void CosgViewView::OnRenderingmodeFlatlines()
+{
+	// TODO: Add your command handler code here
+	setMode(Modes::flatLines);
+}
+
+
+void CosgViewView::OnRenderingmodeFlat()
+{
+	// TODO: Add your command handler code here
+	setMode(Modes::flat);
+}
+
+
+void CosgViewView::OnRenderingmodeSmooth()
+{
+	// TODO: Add your command handler code here
+	setMode(Modes::smooth);
+}
+
+
+void CosgViewView::OnUpdateRenderingmodePointcloud(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI-> SetCheck(mode==Modes::pointCloud);
+}
+
+
+void CosgViewView::OnUpdateRenderingmodeTexture(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI-> SetCheck(mode==Modes::texture);
+}
+
+
+void CosgViewView::OnUpdateRenderingmodeWireframe(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI-> SetCheck(mode==Modes::wireframe);
+}
+
+
+void CosgViewView::OnUpdateRenderingmodeFlatlines(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI-> SetCheck(mode==Modes::flatLines);
+}
+
+
+void CosgViewView::OnUpdateRenderingmodeFlat(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI-> SetCheck(mode==Modes::flat);
+}
+
+
+void CosgViewView::OnUpdateRenderingmodeSmooth(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI-> SetCheck(mode==Modes::smooth);
 }

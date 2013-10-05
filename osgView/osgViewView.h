@@ -28,6 +28,7 @@ protected:
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 	 cOSG* mOSG;
 	 StereoParameter sp;
+	 Modes mode;
 	 bool stereo;
     //HANDLE mThreadHandle;
     CRenderingThread* mThreadHandle;
@@ -42,6 +43,8 @@ public:
 protected:
 
 // Generated message map functions
+
+private:void setMode(Modes m);
 protected:
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
@@ -54,6 +57,18 @@ public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnEditPreferences();
+	afx_msg void OnRenderingmodePointcloud();
+	afx_msg void OnRenderingmodeTexture();
+	afx_msg void OnRenderingmodeWireframe();
+	afx_msg void OnRenderingmodeFlatlines();
+	afx_msg void OnRenderingmodeFlat();
+	afx_msg void OnRenderingmodeSmooth();
+	afx_msg void OnUpdateRenderingmodePointcloud(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateRenderingmodeTexture(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateRenderingmodeWireframe(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateRenderingmodeFlatlines(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateRenderingmodeFlat(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateRenderingmodeSmooth(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in osgViewView.cpp

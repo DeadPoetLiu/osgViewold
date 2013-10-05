@@ -16,3 +16,5 @@ struct MoveMentParameter{
 	double height,distance;
 	MoveMentParameter():b1(false),b2(false),b3(false),b4(false),height(5),distance(1){};
 };
+
+enum Modes{ pointCloud,texture,wireframe,flatLines,flat,smooth};
