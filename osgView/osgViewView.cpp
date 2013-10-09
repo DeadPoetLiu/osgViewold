@@ -47,11 +47,12 @@ BEGIN_MESSAGE_MAP(CosgViewView, CView)
 	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_FLATLINES, &CosgViewView::OnUpdateRenderingmodeFlatlines)
 	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_FLAT, &CosgViewView::OnUpdateRenderingmodeFlat)
 	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_SMOOTH, &CosgViewView::OnUpdateRenderingmodeSmooth)
+	ON_COMMAND(ID_VIEW_LIGHTS, &CosgViewView::OnViewLights)
 END_MESSAGE_MAP()
 
 // CosgViewView construction/destruction
 
-CosgViewView::CosgViewView():stereo(false)
+CosgViewView::CosgViewView():stereo(false),lights(true)
 {
 	// TODO: add construction code here
 
@@ -210,7 +211,7 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     // Close Window on Escape Key
     if(nChar == VK_ESCAPE)
     {
-        GetParent()->SendMessage(WM_CLOSE);
+     //  GetParent()->SendMessage(WM_CLOSE);
     }
 	if(nChar == VK_F1)
     {
@@ -293,6 +294,8 @@ void CosgViewView::setMode(Modes m){
 		break;
 	case Modes::smooth:
 		sm=osg::ShadeModel::SMOOTH;
+		
+
 		break;
 	}
 
@@ -396,4 +399,19 @@ void CosgViewView::OnUpdateRenderingmodeSmooth(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI-> SetCheck(mode==Modes::smooth);
+}
+
+
+void CosgViewView::OnViewLights()
+{
+	// TODO: Add your command handler code here
+	
+
+	
+	 osg::StateSet* stateset = mOSG->mModel->getOrCreateStateSet();
+	 lights=!lights;
+	 if(lights)
+	 stateset->setMode(GL_LIGHTING,osg::StateAttribute::ON);
+	 else
+		 stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
 }

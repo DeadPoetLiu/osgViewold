@@ -30,6 +30,7 @@ protected:
 	 StereoParameter sp;
 	 Modes mode;
 	 bool stereo;
+	 bool lights;
     //HANDLE mThreadHandle;
     CRenderingThread* mThreadHandle;
 // Implementation
@@ -69,6 +70,7 @@ public:
 	afx_msg void OnUpdateRenderingmodeFlatlines(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateRenderingmodeFlat(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateRenderingmodeSmooth(CCmdUI *pCmdUI);
+	afx_msg void OnViewLights();
 };
 
 #ifndef _DEBUG  // debug version in osgViewView.cpp

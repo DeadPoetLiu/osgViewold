@@ -70,7 +70,7 @@ void cOSG::InitCameraConfig(void)
 
     // Create the viewer for this window
     mViewer = new osgViewer::Viewer();
-
+	
     // Add a Stats Handler to the viewer
     mViewer->addEventHandler(new osgViewer::StatsHandler);
     
@@ -129,8 +129,8 @@ void cOSG::InitCameraConfig(void)
 	
 mViewer->getCamera()->setDisplaySettings(new osg::DisplaySettings()); 
 
-	
-
+	mViewer->setKeyEventSetsDone(0);
+  
 
 
     // Correct aspect ratio
