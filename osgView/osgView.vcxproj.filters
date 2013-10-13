@@ -35,6 +35,8 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="out.txt" />
+    <None Include="conf.txt" />
+    <None Include="file.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="osgView.h">
@@ -77,6 +79,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="all.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="keyTranslation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

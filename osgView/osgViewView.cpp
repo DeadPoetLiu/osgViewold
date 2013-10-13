@@ -14,6 +14,8 @@
 #include "osgViewView.h"
 #include "PreferenceDialog.h"
 #include <osg/ShadeModel> 
+#include <fstream>
+#include "IO.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -48,6 +50,8 @@ BEGIN_MESSAGE_MAP(CosgViewView, CView)
 	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_FLAT, &CosgViewView::OnUpdateRenderingmodeFlat)
 	ON_UPDATE_COMMAND_UI(ID_RENDERINGMODE_SMOOTH, &CosgViewView::OnUpdateRenderingmodeSmooth)
 	ON_COMMAND(ID_VIEW_LIGHTS, &CosgViewView::OnViewLights)
+	ON_COMMAND(ID_VIEW_SETHOMEPOSITION, &CosgViewView::OnViewSethomeposition)
+	ON_COMMAND(ID_VIEW_RETURNHOME, &CosgViewView::OnViewReturnhome)
 END_MESSAGE_MAP()
 
 // CosgViewView construction/destruction
@@ -55,7 +59,7 @@ END_MESSAGE_MAP()
 CosgViewView::CosgViewView():stereo(false),lights(true)
 {
 	// TODO: add construction code here
-
+	//OnViewSethomeposition();
 }
 
 CosgViewView::~CosgViewView()
@@ -111,8 +115,8 @@ void CosgViewView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 
 void CosgViewView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 {
-	ClientToScreen(&point);
-	OnContextMenu(this, point);
+	//ClientToScreen(&point);
+	//OnContextMenu(this, point);
 }
 
 void CosgViewView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
@@ -162,6 +166,27 @@ void CosgViewView::OnInitialUpdate()
     //mThreadHandle = (HANDLE)_beginthread(&cOSG::Render, 0, mOSG); 
     mThreadHandle = new CRenderingThread(mOSG);
     mThreadHandle->start();
+	fn=csFileName.GetString();
+	std::ofstream inf("file.txt");
+	inf<<fn;
+	inf.close();
+	/*std::ifstream in("conf.txt");
+	if(in){
+		in.close();
+		this->home=::ReadMatrix(in);
+		this->OnViewReturnhome();
+
+	}
+	else*/
+	 //   this->OnViewSethomeposition();
+	std::ifstream in(fn+".conf");
+	if(in){
+	home=::ReadMatrix(in);
+	in.close();
+	this->OnViewReturnhome();
+	}else{
+		this->OnViewSethomeposition();
+	}
 }
 
 
@@ -180,8 +205,19 @@ int CosgViewView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CosgViewView::OnDestroy()
 {
-	CView::OnDestroy();
+	std::ofstream out(fn+".conf");
+	
+	
+	::WriteMatrix(out,home);
+	out.close();
+	/* CString csFileName = GetDocument()->GetFileName();
 
+    std::string fileName=csFileName.GetString();
+	std::ofstream out(fileName+".cfg");
+	::WriteMatrix(out,home);
+	out.close();*/
+	CView::OnDestroy();
+	
 	// TODO: Add your message handler code here
 	 delete mThreadHandle;
     if(mOSG != 0) delete mOSG;
@@ -414,4 +450,34 @@ void CosgViewView::OnViewLights()
 	 stateset->setMode(GL_LIGHTING,osg::StateAttribute::ON);
 	 else
 		 stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+}
+
+
+void CosgViewView::OnViewSethomeposition()
+{
+	// TODO: Add your command handler code here
+	//std::ofstream out("conf.txt");
+	
+	home=this->mOSG->trackball->getMatrix();
+	/*::WriteMatrix(out,home);
+	out.close();*/
+//	 home=viewer->getCamera()->getViewMatrix();
+
+}
+
+
+void CosgViewView::OnViewReturnhome()
+{
+	// TODO: Add your command handler code here
+
+	
+
+	// viewer->getCamera()->setViewMatrix(home);
+	/* std::ifstream in("conf.txt");
+	 osg::Matrixd f;
+	 f=::ReadMatrix(in);
+	 std::ofstream out("out.txt");
+	 ::WriteMatrix(out,f);
+	 out.close();*/
+	 this->mOSG->trackball->setByMatrix(home);
 }

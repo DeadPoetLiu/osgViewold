@@ -2,10 +2,10 @@
 //
 #include "stdafx.h"
 #include "MFC_OSG.h"
-
+#include "keyTranslation.h"
 
 cOSG::cOSG(HWND hWnd) :
-   m_hWnd(hWnd) 
+   m_hWnd(hWnd),changeHome(false) 
 {
 }
 
@@ -26,6 +26,7 @@ void cOSG::InitOSG(std::string modelname)
     // Init different parts of OSG
     InitManipulators();
     InitSceneGraph();
+	
     InitCameraConfig();
 }
 
@@ -41,7 +42,7 @@ void cOSG::InitManipulators(void)
     keyswitchManipulator->addMatrixManipulator( '1', "Trackball", trackball.get());
 
     // Init the switcher to the first manipulator (in this case the only manipulator)
-    keyswitchManipulator->selectMatrixManipulator(0);  // Zero based index Value
+  //  keyswitchManipulator->selectMatrixManipulator(0);  // Zero based index Value
 }
 
 
@@ -52,6 +53,9 @@ void cOSG::InitSceneGraph(void)
 
     // Load the Model from the model name
     mModel = osgDB::readNodeFile(m_ModelName);
+	xform = new osg::PositionAttitudeTransform();
+
+	mRoot->addChild(xform);
     if (!mModel) return;
 
     // Optimize the model
@@ -60,7 +64,9 @@ void cOSG::InitSceneGraph(void)
     optimizer.reset();
 
     // Add the model to the scene
-    mRoot->addChild(mModel.get());
+	 
+	xform->addChild(mModel.get());
+  //  mRoot->addChild(mModel.get());
 }
 
 void cOSG::InitCameraConfig(void)
@@ -73,7 +79,7 @@ void cOSG::InitCameraConfig(void)
 	
     // Add a Stats Handler to the viewer
     mViewer->addEventHandler(new osgViewer::StatsHandler);
-    
+ 
     // Get the current window size
     ::GetWindowRect(m_hWnd, &rect);
 
@@ -117,11 +123,18 @@ void cOSG::InitCameraConfig(void)
     mViewer->setCamera(camera.get());
 
     // Add the Camera Manipulator to the Viewer
-    mViewer->setCameraManipulator(keyswitchManipulator.get());
-
+    //mViewer->setCameraManipulator(keyswitchManipulator.get());
+	mViewer->setCameraManipulator(this->trackball.get());
     // Set the Scene Data
     mViewer->setSceneData(mRoot.get());
 
+	   tankInputDeviceStateType* tIDevState = new tankInputDeviceStateType;
+	   if(xform)
+	          xform->setUpdateCallback(new updateTankPosCallback(tIDevState));
+	  myKeyboardEventHandler* tankEventHandler = new myKeyboardEventHandler(tIDevState);
+
+	
+	 mViewer->addEventHandler(tankEventHandler); 
     // Realize the Viewer
     mViewer->realize();
 
@@ -143,6 +156,14 @@ mViewer->getCamera()->setDisplaySettings(new osg::DisplaySettings());
 void cOSG::PreFrameUpdate()
 {
     // Due any preframe updates in this routine
+	/*if(changeHome){
+		
+	changeHome=false;
+	osg::Vec3d eye,centre,up;
+	mViewer->getCamera()->getViewMatrixAsLookAt(eye,centre,up);
+	
+	trackball->setHomePosition(eye,centre,up);
+	}*/
 }
 
 void cOSG::PostFrameUpdate()

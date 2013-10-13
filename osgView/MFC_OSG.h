@@ -31,14 +31,16 @@ public:
 
     osgViewer::Viewer* getViewer() { return mViewer; }
 	 osg::ref_ptr<osg::Node> mModel;
+	 osg::ref_ptr<osgGA::TrackballManipulator> trackball;
+	 bool changeHome;
 private:
     bool mDone;
     std::string m_ModelName;
     HWND m_hWnd;
     osgViewer::Viewer* mViewer;
     osg::ref_ptr<osg::Group> mRoot;
-   
-    osg::ref_ptr<osgGA::TrackballManipulator> trackball;
+   osg::PositionAttitudeTransform * xform;
+    
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator;
 };
 

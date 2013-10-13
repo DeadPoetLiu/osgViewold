@@ -46,6 +46,8 @@ protected:
 // Generated message map functions
 
 private:void setMode(Modes m);
+		osg::Matrixd home;
+		std::string fn;
 protected:
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
@@ -71,6 +73,8 @@ public:
 	afx_msg void OnUpdateRenderingmodeFlat(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateRenderingmodeSmooth(CCmdUI *pCmdUI);
 	afx_msg void OnViewLights();
+	afx_msg void OnViewSethomeposition();
+	afx_msg void OnViewReturnhome();
 };
 
 #ifndef _DEBUG  // debug version in osgViewView.cpp
