@@ -138,6 +138,10 @@ void cOSG::InitCameraConfig(void)
     // Realize the Viewer
     mViewer->realize();
 
+	 double fovy,aspectRatio,z1,z2;
+    camera->getProjectionMatrixAsPerspective(fovy,aspectRatio,z1,z2);
+    aspectRatio=double(traits->width)/double(traits->height);
+    camera->setProjectionMatrixAsPerspective(fovy,aspectRatio,z1,z2);
 
 	
 mViewer->getCamera()->setDisplaySettings(new osg::DisplaySettings()); 

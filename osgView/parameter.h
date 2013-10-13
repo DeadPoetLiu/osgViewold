@@ -6,7 +6,7 @@ struct StereoParameter{
 	double screenHeight;
 	double screenDistance;
 	double eyeSeparation;
-	StereoParameter():stereoDisplay(0),stereoMode(0),screenWidth(50),screenHeight(28),screenDistance(1),eyeSeparation(60){}
+	StereoParameter():stereoDisplay(0),stereoMode(1),screenWidth(50),screenHeight(28),screenDistance(1),eyeSeparation(60){}
 
 
 };

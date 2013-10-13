@@ -52,6 +52,7 @@ BEGIN_MESSAGE_MAP(CosgViewView, CView)
 	ON_COMMAND(ID_VIEW_LIGHTS, &CosgViewView::OnViewLights)
 	ON_COMMAND(ID_VIEW_SETHOMEPOSITION, &CosgViewView::OnViewSethomeposition)
 	ON_COMMAND(ID_VIEW_RETURNHOME, &CosgViewView::OnViewReturnhome)
+	ON_COMMAND(ID_VIEW_STEREO, &CosgViewView::OnViewStereo)
 END_MESSAGE_MAP()
 
 // CosgViewView construction/destruction
@@ -60,6 +61,7 @@ CosgViewView::CosgViewView():stereo(false),lights(true)
 {
 	// TODO: add construction code here
 	//OnViewSethomeposition();
+	
 }
 
 CosgViewView::~CosgViewView()
@@ -259,21 +261,8 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	
 }
 
-
-void CosgViewView::OnEditPreferences()
-{
-	//	// TODO: Add your command handler code here
-	CPreferenceDialog aDlg; // Create a local dialog object
-// Display the dialog as modal
-	aDlg.stereo.sp=sp;
-   /* std::ofstream out;
-	out.open("out.txt",std::ofstream::out|std::ofstream::app);
-	out<<"OnEditPreferences"<<std::endl;*/
-	if(aDlg.DoModal() == IDOK)
-    {   
-		this->sp=aDlg.stereo.sp;
-		//out<<aDlg.stereo.stereoMode<<std::endl;
-		mOSG->getViewer()->getCamera()->setDisplaySettings(new osg::DisplaySettings()); 
+void CosgViewView::setStereo(){
+	mOSG->getViewer()->getCamera()->setDisplaySettings(new osg::DisplaySettings()); 
         auto setting=mOSG->getViewer()->getCamera()->getDisplaySettings();
 		setting->setStereo(sp.stereoDisplay);
 		switch(sp.stereoMode){
@@ -296,10 +285,26 @@ void CosgViewView::OnEditPreferences()
 			break;
 
 		}
-		setting->setScreenWidth(sp.screenWidth/100);
+		/*setting->setScreenWidth(sp.screenWidth/100);
 		setting->setScreenHeight(sp.screenHeight/100);
 		setting->setScreenDistance(sp.screenDistance);
-		setting->setEyeSeparation(sp.eyeSeparation/1000);
+		setting->setEyeSeparation(sp.eyeSeparation/1000);*/
+
+
+}
+void CosgViewView::OnEditPreferences()
+{
+	//	// TODO: Add your command handler code here
+	CPreferenceDialog aDlg; // Create a local dialog object
+// Display the dialog as modal
+	aDlg.stereo.sp=sp;
+   /* std::ofstream out;
+	out.open("out.txt",std::ofstream::out|std::ofstream::app);
+	out<<"OnEditPreferences"<<std::endl;*/
+	if(aDlg.DoModal() == IDOK)
+    {   
+		this->sp=aDlg.stereo.sp;
+	    setStereo();
 
     }/*else{
 		out<<"cancel"<<std::endl;
@@ -480,4 +485,12 @@ void CosgViewView::OnViewReturnhome()
 	 ::WriteMatrix(out,f);
 	 out.close();*/
 	 this->mOSG->trackball->setByMatrix(home);
+}
+
+
+void CosgViewView::OnViewStereo()
+{
+	// TODO: Add your command handler code here
+	sp.stereoDisplay=!sp.stereoDisplay;
+	setStereo();
 }

@@ -167,6 +167,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
      EnableFullScreenMainMenu(FALSE);
 
+	 EnableMDITabbedGroups(FALSE,CMDITabInfo());
 	return 0;
 }
 
