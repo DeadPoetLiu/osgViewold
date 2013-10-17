@@ -42,6 +42,13 @@ private:
    osg::PositionAttitudeTransform * xform;
     
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator;
+public:
+	bool movingCamera;
+	osg::Vec3 start;
+	osg::Vec3 end;
+
+	double movingRate;
+	double step;
 };
 
 class CRenderingThread : public OpenThreads::Thread

@@ -77,6 +77,8 @@ public:
 	afx_msg void OnViewSethomeposition();
 	afx_msg void OnViewReturnhome();
 	afx_msg void OnViewStereo();
+private:
+	void changeAspectRatio(double rate);
 };
 
 #ifndef _DEBUG  // debug version in osgViewView.cpp

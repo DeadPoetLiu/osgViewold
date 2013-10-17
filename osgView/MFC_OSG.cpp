@@ -6,7 +6,10 @@
 
 cOSG::cOSG(HWND hWnd) :
    m_hWnd(hWnd),changeHome(false) 
-{
+	   , movingCamera(false)
+	   , movingRate(1.0/1000)
+	   , step(0)
+   {
 }
 
 cOSG::~cOSG()
@@ -141,6 +144,7 @@ void cOSG::InitCameraConfig(void)
 	 double fovy,aspectRatio,z1,z2;
     camera->getProjectionMatrixAsPerspective(fovy,aspectRatio,z1,z2);
     aspectRatio=double(traits->width)/double(traits->height);
+	//aspectRatio=10;
     camera->setProjectionMatrixAsPerspective(fovy,aspectRatio,z1,z2);
 
 	
@@ -148,6 +152,7 @@ mViewer->getCamera()->setDisplaySettings(new osg::DisplaySettings());
 
 	mViewer->setKeyEventSetsDone(0);
   
+	
 
 
     // Correct aspect ratio
@@ -168,6 +173,17 @@ void cOSG::PreFrameUpdate()
 	
 	trackball->setHomePosition(eye,centre,up);
 	}*/
+	//static double step=0;
+	if(this->movingCamera){
+		this->trackball->setCenter(start*(1-step)+end*step);
+
+		step+=this->movingRate;
+		if(step>1){
+	//		this->movingCamera=false;
+			step=0;
+		}
+	}
+
 }
 
 void cOSG::PostFrameUpdate()

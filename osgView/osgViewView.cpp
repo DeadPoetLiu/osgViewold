@@ -15,6 +15,7 @@
 #include "PreferenceDialog.h"
 #include <osg/ShadeModel> 
 #include <fstream>
+#include <Windows.h>
 #include "IO.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -169,9 +170,9 @@ void CosgViewView::OnInitialUpdate()
     mThreadHandle = new CRenderingThread(mOSG);
     mThreadHandle->start();
 	fn=csFileName.GetString();
-	std::ofstream inf("file.txt");
-	inf<<fn;
-	inf.close();
+//	std::ofstream inf("file.txt");
+//	inf<<fn;
+//	inf.close();
 	/*std::ifstream in("conf.txt");
 	if(in){
 		in.close();
@@ -189,6 +190,8 @@ void CosgViewView::OnInitialUpdate()
 	}else{
 		this->OnViewSethomeposition();
 	}
+	if(this->mOSG->mModel!=nullptr)
+	   OnViewLights();
 }
 
 
@@ -244,21 +247,55 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 	// Pass Key Presses into OSG
-    mOSG->getViewer()->getEventQueue()->keyPress(nChar);
+ //   mOSG->getViewer()->getEventQueue()->keyPress(nChar);
 
     // Close Window on Escape Key
-    if(nChar == VK_ESCAPE)
-    {
-     //  GetParent()->SendMessage(WM_CLOSE);
-    }
-	if(nChar == VK_F1)
-    {
-		stereo= !stereo;
-		mOSG->getViewer()->getCamera()->setDisplaySettings(new osg::DisplaySettings()); 
-        mOSG->getViewer()->getCamera()->getDisplaySettings()->setStereo(stereo);
-		mOSG->getViewer()->getCamera()->getDisplaySettings()->setStereoMode(osg::DisplaySettings::HORIZONTAL_SPLIT);
-    }
+	switch(nChar){
+	case VK_F1:
+		this->OnViewStereo();
+		break;
+	case VK_F2:
+		this->changeAspectRatio(1.1);
+		break;
+	case VK_F3:
+		 this->changeAspectRatio(1/1.1);
+		 break;
+	case VK_F4:
+		this->mOSG->movingRate*=2;
+		break;
+	case VK_F5:
+		this->mOSG->movingRate/=2;
+		break;
+	case 'B':
+		this->mOSG->start=this->mOSG->trackball->getCenter();
+		this->mOSG->step=0;
+	    break;
+	case 'E':
+		this->mOSG->end=this->mOSG->trackball->getCenter();
+		this->mOSG->step=0;
+		break;
+	case 'M':
+
+		this->mOSG->movingCamera=!this->mOSG->movingCamera;
+		break;
 	
+  
+
+	}
+ //   if(nChar == VK_ESCAPE)
+ //   {
+ //    //  GetParent()->SendMessage(WM_CLOSE);
+ //   }
+	//else if(nChar == VK_F1)
+ //   {
+	//	this->OnViewStereo();
+	//	/*stereo= !stereo;
+	//	mOSG->getViewer()->getCamera()->setDisplaySettings(new osg::DisplaySettings()); 
+ //       mOSG->getViewer()->getCamera()->getDisplaySettings()->setStereo(stereo);
+	//	mOSG->getViewer()->getCamera()->getDisplaySettings()->setStereoMode(osg::DisplaySettings::HORIZONTAL_SPLIT);*/
+ //   }
+	//else if(
+	//
 }
 
 void CosgViewView::setStereo(){
@@ -460,16 +497,40 @@ void CosgViewView::OnViewLights()
 
 void CosgViewView::OnViewSethomeposition()
 {
+	home=this->mOSG->trackball->getMatrix();
 	// TODO: Add your command handler code here
 	//std::ofstream out("conf.txt");
-	
+	/*static int seq=0;
 	home=this->mOSG->trackball->getMatrix();
-	/*::WriteMatrix(out,home);
+	if(seq%2==0)
+		mOSG->start=mOSG->trackball->getCenter();
+	else
+		mOSG->end=mOSG->trackball->getCenter();
+
+	seq++;*/
+	/**::WriteMatrix(out,home);
 	out.close();*/
-//	 home=viewer->getCamera()->getViewMatrix();
+	// home=viewer->getCamera()->getViewMatrix();
 
 }
-
+//struct Track{
+//public:osg::Vec3 start;
+//	osg::Vec3 end;
+//	double step;
+//	osgGA::TrackballManipulator * m;
+//	Track(const osg::Vec3 & s,const osg::Vec3 e,osgGA::TrackballManipulator * ms):start(s),end(e),m(ms),step(0.0001){};
+//	void open(){
+//
+//		for(double p=0;p<=1;p+=step){
+//		//  Sleep(1);
+//			m->setCenter(start*p+end*(1-p));
+//			
+//		}
+//	}
+//
+//
+//
+//};
 
 void CosgViewView::OnViewReturnhome()
 {
@@ -477,7 +538,7 @@ void CosgViewView::OnViewReturnhome()
 
 	
 
-	// viewer->getCamera()->setViewMatrix(home);
+  // viewer->getCamera()->setViewMatrix(home);
 	/* std::ifstream in("conf.txt");
 	 osg::Matrixd f;
 	 f=::ReadMatrix(in);
@@ -485,6 +546,15 @@ void CosgViewView::OnViewReturnhome()
 	 ::WriteMatrix(out,f);
 	 out.close();*/
 	 this->mOSG->trackball->setByMatrix(home);
+	// osg::Vec3 start=mOSG->trackball->getCenter();
+	//auto temp=start+osg::Vec3(10,0,0);
+	//Track track(start, temp,mOSG->trackball);
+	////start=temp;
+	//track.open();
+
+	//this->mOSG->trackball->setCenter(mOSG->trackball->getCenter()+osg::Vec3d(100,1,1));
+	 
+	//mOSG->movingCamera=true;
 }
 
 
@@ -493,4 +563,20 @@ void CosgViewView::OnViewStereo()
 	// TODO: Add your command handler code here
 	sp.stereoDisplay=!sp.stereoDisplay;
 	setStereo();
+	//mOSG->movingCamera=true;
+	
+}
+
+
+
+
+
+void CosgViewView::changeAspectRatio(double rate)
+{
+	 double fovy,aspectRatio,z1,z2;
+	 auto camera=this->mOSG->getViewer()->getCamera();
+	 camera->getProjectionMatrixAsPerspective(fovy,aspectRatio,z1,z2);
+     aspectRatio*=rate;
+	//aspectRatio=10;
+    camera->setProjectionMatrixAsPerspective(fovy,aspectRatio,z1,z2);
 }
