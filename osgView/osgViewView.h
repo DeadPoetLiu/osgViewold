@@ -5,6 +5,8 @@
 #pragma once
 #include "parameter.h"
 #include "MFC_OSG.h"
+#include "camera.h"
+//#include "act.h"
 class CosgViewView : public CView
 {
 protected: // create from serialization only
@@ -48,6 +50,8 @@ protected:
 private:void setMode(Modes m);
 		osg::Matrixd home;
 		std::string fn;
+		osg::ref_ptr<osg::Node> actNode;
+		osg::ref_ptr<osg::Node> textNode;
 		void setStereo();
 protected:
 	afx_msg void OnFilePrintPreview();
@@ -79,6 +83,15 @@ public:
 	afx_msg void OnViewStereo();
 private:
 	void changeAspectRatio(double rate);
+public:
+	afx_msg void OnFileLoadact();
+private:
+//	Act act;
+public:
+	drawCamera dc;
+	afx_msg void OnFileLoadtxt();
+	afx_msg void OnFileUnloadact();
+	afx_msg void OnFileUnloadtxt();
 };
 
 #ifndef _DEBUG  // debug version in osgViewView.cpp

@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "camera.h"
 #include "all.h"
 // SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
 // and search filter handlers and allows sharing of document code with that project.
@@ -54,11 +55,15 @@ BEGIN_MESSAGE_MAP(CosgViewView, CView)
 	ON_COMMAND(ID_VIEW_SETHOMEPOSITION, &CosgViewView::OnViewSethomeposition)
 	ON_COMMAND(ID_VIEW_RETURNHOME, &CosgViewView::OnViewReturnhome)
 	ON_COMMAND(ID_VIEW_STEREO, &CosgViewView::OnViewStereo)
+	ON_COMMAND(ID_FILE_LOADACT, &CosgViewView::OnFileLoadact)
+	ON_COMMAND(ID_FILE_LOADTXT, &CosgViewView::OnFileLoadtxt)
+	ON_COMMAND(ID_FILE_UNLOADACT, &CosgViewView::OnFileUnloadact)
+	ON_COMMAND(ID_FILE_UNLOADTXT, &CosgViewView::OnFileUnloadtxt)
 END_MESSAGE_MAP()
 
 // CosgViewView construction/destruction
 
-CosgViewView::CosgViewView():stereo(false),lights(true)
+CosgViewView::CosgViewView():stereo(false),lights(false)
 {
 	// TODO: add construction code here
 	//OnViewSethomeposition();
@@ -190,8 +195,9 @@ void CosgViewView::OnInitialUpdate()
 	}else{
 		this->OnViewSethomeposition();
 	}
-	if(this->mOSG->mModel!=nullptr)
-	   OnViewLights();
+	/*if(this->mOSG->mModel!=nullptr)
+	   OnViewLights();*/
+
 }
 
 
@@ -266,6 +272,53 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case VK_F5:
 		this->mOSG->movingRate/=2;
 		break;
+	case 'U':
+		dc.scale*=1.5;
+	
+		if(this->actNode.valid()){
+			auto old=actNode.get();
+			actNode=dc.result();
+			mOSG->mRoot->replaceChild(old,actNode.get());
+		}
+		if(this->textNode.valid()){
+			auto old=textNode.get();
+			textNode=dc.readText();
+			mOSG->mRoot->replaceChild(old,textNode.get());
+
+		}
+	    break;
+	case 'I':
+		dc.scale/=1.5;
+		if(this->actNode.valid()){
+			auto old=actNode.get();
+			actNode=dc.result();
+			mOSG->mRoot->replaceChild(old,actNode.get());
+		}
+		if(this->textNode.valid()){
+			auto old=textNode.get();
+			textNode=dc.readText();
+			mOSG->mRoot->replaceChild(old,textNode.get());
+
+		}
+		break;
+	case 'O':
+		dc.stepLength+=1;
+		if(this->actNode.valid()){
+			auto old=actNode.get();
+			actNode=dc.result();
+			mOSG->mRoot->replaceChild(old,actNode.get());
+		}
+		break;
+	case 'P':
+		if(dc.stepLength>1){
+		dc.stepLength-=1;
+		if(this->actNode.valid()){
+			auto old=actNode.get();
+			actNode=dc.result();
+			mOSG->mRoot->replaceChild(old,actNode.get());
+		}
+		}
+		break;
 	case 'B':
 		this->mOSG->start=this->mOSG->trackball->getCenter();
 		this->mOSG->step=0;
@@ -279,7 +332,7 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		this->mOSG->movingCamera=!this->mOSG->movingCamera;
 		break;
 	
-  
+		
 
 	}
  //   if(nChar == VK_ESCAPE)
@@ -486,12 +539,12 @@ void CosgViewView::OnViewLights()
 	
 
 	
-	 osg::StateSet* stateset = mOSG->mModel->getOrCreateStateSet();
+	 osg::StateSet* stateset = mOSG->mRoot->getOrCreateStateSet();
 	 lights=!lights;
 	 if(lights)
-	 stateset->setMode(GL_LIGHTING,osg::StateAttribute::ON);
+	 stateset->setMode(GL_LIGHTING,osg::StateAttribute::ON|osg::StateAttribute::PROTECTED);
 	 else
-		 stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+		 stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
 }
 
 
@@ -579,4 +632,64 @@ void CosgViewView::changeAspectRatio(double rate)
      aspectRatio*=rate;
 	//aspectRatio=10;
     camera->setProjectionMatrixAsPerspective(fovy,aspectRatio,z1,z2);
+}
+
+
+void CosgViewView::OnFileLoadact()
+{
+	// TODO: Add your command handler code here
+	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY ,
+		"(*.act)|*.act", this);
+	
+	// dlg.m_ofn.lpstrInitialDir = (BSTR)directoryName;  //设置对话框默认呈现的路径
+	
+	std::string strFilePath;
+	if(dlg.DoModal() == IDOK)
+	{
+		strFilePath=dlg.GetPathName( ).GetBuffer();
+		dc.actFile=strFilePath;
+		this->actNode=this->dc.result().get();
+		mOSG->mRoot->addChild(actNode);
+		
+	}
+}
+
+
+
+
+
+void CosgViewView::OnFileLoadtxt()
+{
+	// TODO: Add your command handler code here
+	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY ,
+		"(*.txt)|*.txt", this);
+	
+	// dlg.m_ofn.lpstrInitialDir = (BSTR)directoryName;  //设置对话框默认呈现的路径
+
+	std::string strFilePath;
+	if(dlg.DoModal() == IDOK)
+	{
+		strFilePath=dlg.GetPathName( ).GetBuffer();
+		dc.textFile=strFilePath;
+		this->textNode=dc.readText().get();
+		mOSG->mRoot->addChild(textNode);
+
+	}
+}
+
+
+void CosgViewView::OnFileUnloadact()
+{
+	// TODO: Add your command handler code here
+	if(this->actNode.valid())
+		mOSG->mRoot->removeChild(actNode.get());
+
+}
+
+
+void CosgViewView::OnFileUnloadtxt()
+{
+	// TODO: Add your command handler code here
+	if(this->textNode.valid())
+		mOSG->mRoot->removeChild(textNode.get());
 }

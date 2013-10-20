@@ -53,9 +53,10 @@ void cOSG::InitSceneGraph(void)
 {
     // Init the main Root Node/Group
     mRoot  = new osg::Group;
-
+	 osg::StateSet* stateset = mRoot->getOrCreateStateSet();
+	 stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
     // Load the Model from the model name
-    mModel = osgDB::readNodeFile(m_ModelName);
+    mModel = osgDB::readNodeFile(m_ModelName,new osgDB::Options("noRotation"));
 	xform = new osg::PositionAttitudeTransform();
 
 	mRoot->addChild(xform);

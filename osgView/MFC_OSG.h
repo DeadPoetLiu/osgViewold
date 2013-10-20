@@ -38,7 +38,7 @@ private:
     std::string m_ModelName;
     HWND m_hWnd;
     osgViewer::Viewer* mViewer;
-    osg::ref_ptr<osg::Group> mRoot;
+    
    osg::PositionAttitudeTransform * xform;
     
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator;
@@ -46,7 +46,7 @@ public:
 	bool movingCamera;
 	osg::Vec3 start;
 	osg::Vec3 end;
-
+	osg::ref_ptr<osg::Group> mRoot;
 	double movingRate;
 	double step;
 };
