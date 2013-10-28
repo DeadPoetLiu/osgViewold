@@ -8,7 +8,7 @@ cOSG::cOSG(HWND hWnd) :
    m_hWnd(hWnd),changeHome(false) 
 	   , movingCamera(false)
 	   , movingRate(1.0/1000)
-	   , step(0)
+	   , step(0),path(new osg::Vec3Array),cur(0)
    {
 }
 
@@ -175,15 +175,30 @@ void cOSG::PreFrameUpdate()
 	trackball->setHomePosition(eye,centre,up);
 	}*/
 	//static double step=0;
-	if(this->movingCamera){
-		this->trackball->setCenter(start*(1-step)+end*step);
+	//if(this->movingCamera){
+	//	this->trackball->setCenter(start*(1-step)+end*step);
+
+	//	step+=this->movingRate;
+	//	if(step>1){
+	////		this->movingCamera=false;
+	//		step=0;
+	//	}
+	//}
+
+		if(this->movingCamera){
+			
+			this->trackball->setCenter(path->operator[](cur)*(1-step)+path->operator[](cur+1)*step);
 
 		step+=this->movingRate;
 		if(step>1){
 	//		this->movingCamera=false;
 			step=0;
+			cur++;
+		    cur=cur%(path->size()-1);
 		}
-	}
+
+		
+	  }
 
 }
 

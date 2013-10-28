@@ -157,9 +157,13 @@ osg::Matrixd readMatrix(std::istream &in){
 
 		m(3,0)=m(3,1)=m(3,2)=0;
 		m(3,3)=1;
-		m= transpose(osg::Matrixd::inverse(m));
+	//	m= transpose(osg::Matrixd::inverse(m));
 		return m;
 
+}
+
+osg::Matrixd transform(const osg::Matrixd & m){
+	return transpose(osg::Matrixd::inverse(m));
 }
 void readFrame(std::istream &in,osg::Group * group,const string & img){
 	static int se=0;
@@ -169,7 +173,7 @@ void readFrame(std::istream &in,osg::Group * group,const string & img){
 	while(in>>s&&s.substr(0,6)!=("<FRAME"));
 	cout<<s<<endl;
 
-	auto m=readMatrix(in);
+	auto m=transform(readMatrix(in));
 	
 	while(in>>s&&s.substr(0,6)!=("<FRAME"));
 	if(!in)
@@ -358,7 +362,7 @@ node->getOrCreateStateSet()->setTextureAttributeAndModes(
 
 }
 
-osg::ref_ptr<osg::Node> result(){
+osg::ref_ptr<osg::Group> result(){
 	directory=this->getDirectory(this->actFile);
 	osg::Group *root=new osg::Group;
 	std::ifstream in(actFile);
@@ -387,14 +391,15 @@ string getDirectory(string file){
 	return file.substr(0,i+1);
 }
 
-osg::ref_ptr<osg::Group> readText(){
+osg::ref_ptr<osg::Group> readText(std::vector<osg::Matrixd> & matrixArray){
 	string directory=getDirectory(this->textFile);
 	string img;
 	ifstream in(this->textFile);
 	osg::Matrixd m;
 	auto group=new osg::Group;
 	while(in>>img){
-		 m=readMatrix(in);
+		 m=transform(readMatrix(in));
+		 matrixArray.push_back(m);
 		 img=directory+img;
 		 group->addChild(getRec(scale,scale*xp/focal,scale*yp/focal,img,m));
 	   
@@ -402,6 +407,19 @@ osg::ref_ptr<osg::Group> readText(){
 
 	return group;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void main_(){
 	/*std::ifstream in("C:\\Users\\w\\Documents\\indoor.act");

@@ -50,8 +50,8 @@ protected:
 private:void setMode(Modes m);
 		osg::Matrixd home;
 		std::string fn;
-		osg::ref_ptr<osg::Node> actNode;
-		osg::ref_ptr<osg::Node> textNode;
+		osg::ref_ptr<osg::Group> actNode;
+		osg::ref_ptr<osg::Group> textNode;
 		void setStereo();
 protected:
 	afx_msg void OnFilePrintPreview();
@@ -92,6 +92,9 @@ public:
 	afx_msg void OnFileLoadtxt();
 	afx_msg void OnFileUnloadact();
 	afx_msg void OnFileUnloadtxt();
+	std::vector<osg::Matrixd> photoMatrixArray;
+	boolean selectPhoto(int seq);
+	void hideAll(void);
 };
 
 #ifndef _DEBUG  // debug version in osgViewView.cpp

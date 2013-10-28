@@ -49,6 +49,8 @@ public:
 	osg::ref_ptr<osg::Group> mRoot;
 	double movingRate;
 	double step;
+	osg::ref_ptr<osg::Vec3Array> path;
+	int cur;
 };
 
 class CRenderingThread : public OpenThreads::Thread

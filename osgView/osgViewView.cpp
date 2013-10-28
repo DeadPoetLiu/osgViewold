@@ -282,7 +282,7 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 		if(this->textNode.valid()){
 			auto old=textNode.get();
-			textNode=dc.readText();
+			textNode=dc.readText(this->photoMatrixArray);
 			mOSG->mRoot->replaceChild(old,textNode.get());
 
 		}
@@ -296,7 +296,7 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 		if(this->textNode.valid()){
 			auto old=textNode.get();
-			textNode=dc.readText();
+			textNode=dc.readText(this->photoMatrixArray);
 			mOSG->mRoot->replaceChild(old,textNode.get());
 
 		}
@@ -320,18 +320,29 @@ void CosgViewView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 		break;
 	case 'B':
-		this->mOSG->start=this->mOSG->trackball->getCenter();
+		
+		this->mOSG->path->clear();
+		this->mOSG->path->push_back(this->mOSG->trackball->getCenter());
+		this->mOSG->cur=0;
 		this->mOSG->step=0;
 	    break;
+	
 	case 'E':
-		this->mOSG->end=this->mOSG->trackball->getCenter();
+		;
+		this->mOSG->path->push_back(this->mOSG->trackball->getCenter());
+		this->mOSG->cur=0;
 		this->mOSG->step=0;
 		break;
-	case 'M':
 
-		this->mOSG->movingCamera=!this->mOSG->movingCamera;
+	case 'M':
+		if(this->mOSG->path->size()>1)
+		   this->mOSG->movingCamera=!this->mOSG->movingCamera;
 		break;
 	
+	 default:
+		 if(nChar>='0'&&nChar<='9')
+		       this->selectPhoto(nChar-'0');
+
 		
 
 	}
@@ -551,6 +562,10 @@ void CosgViewView::OnViewLights()
 void CosgViewView::OnViewSethomeposition()
 {
 	home=this->mOSG->trackball->getMatrix();
+	std::ofstream out("C:\\Users\\w\\Desktop\\out.txt",std::ofstream::app);
+	out<<home<<std::endl;
+
+	out.close();
 	// TODO: Add your command handler code here
 	//std::ofstream out("conf.txt");
 	/*static int seq=0;
@@ -671,7 +686,8 @@ void CosgViewView::OnFileLoadtxt()
 	{
 		strFilePath=dlg.GetPathName( ).GetBuffer();
 		dc.textFile=strFilePath;
-		this->textNode=dc.readText().get();
+		this->photoMatrixArray.clear();
+		this->textNode=dc.readText(this->photoMatrixArray).get();
 		mOSG->mRoot->addChild(textNode);
 
 	}
@@ -690,6 +706,84 @@ void CosgViewView::OnFileUnloadact()
 void CosgViewView::OnFileUnloadtxt()
 {
 	// TODO: Add your command handler code here
-	if(this->textNode.valid())
+	if(this->textNode.valid()){
 		mOSG->mRoot->removeChild(textNode.get());
+		this->photoMatrixArray.clear();
+	}
+}
+
+
+
+
+
+
+
+
+boolean CosgViewView::selectPhoto(int seq)
+{
+	if(seq>=0&&seq<this->photoMatrixArray.size()&&this->textNode.valid()){
+		hideAll();
+		auto t=this->textNode->getChild(seq);
+		t->setNodeMask(0xffffffff );
+		std::ofstream out("C:\\Users\\w\\Desktop\\selectPhoto.txt",std::ofstream::app);
+	//	this->mOSG->trackball->setTransformation(osg::Vec3(0,0,0)*photoMatrixArray[seq],osg::Matrixd::inverse(photoMatrixArray[seq]).getRotate());
+	//	this->mOSG->getViewer()->setCameraManipulator(NULL);
+		/*auto diandao=osg::Matrixd(0 ,1, 0, 0,
+        1, 0, 0, 0,
+        0, 0, 1, 0,
+        0 ,0, 0 ,1);*/
+		
+		/*auto diandao=osg::Matrixd( 1, 0, 0,0
+        1, 0, 0, 0,
+        0, 0, 1, 0,
+        0 ,0, 0 ,1);*/
+		auto rot=osg::Matrix3(1,0,0,0,0,-1,0,1,0);
+		out<<"photoMatrixArray[seq]"<<endl;
+		out<<photoMatrixArray[seq]<<endl;
+		out<<"diandao"<<endl;
+		//out<<diandao<<endl;
+//		auto mat= photoMatrixArray[seq]* diandao;
+	/*	out<<"mat"<<endl;
+		out<<mat<<std::endl;*/
+
+	    out<<"pre"<<endl;
+		out<<this->mOSG->trackball->getMatrix()<<endl;
+
+		//this->mOSG->getViewer()->getCamera()->setProjectionMatrixAsPerspective( 0.6199,1.7778,1,300);
+		auto anotherm=photoMatrixArray[seq];
+		anotherm(0,0)=-anotherm(0,0);
+		anotherm(1,0)=-anotherm(1,0);
+		anotherm(2,0)=-anotherm(2,0);
+		anotherm(3,0)=-anotherm(3,0);
+
+		osg::Quat qRotAboutAxisByDegree; 
+		qRotAboutAxisByDegree.makeRotate( osg::DegreesToRadians(90.), osg::Z_AXIS);
+		anotherm.setRotate(anotherm.getRotate() * qRotAboutAxisByDegree); 
+		
+		this->mOSG->trackball->setByMatrix(anotherm);
+		
+		//this->mOSG->trackball->se
+		//this->mOSG->trackball->setByMatrix(anotherm);
+		//this->mOSG->trackball->setRotation(this->mOSG->trackball->getRotation()* );
+		out<<"get matrix"<<endl;
+		out<<this->mOSG->trackball->getMatrix()<<endl;
+
+		out.close();
+		//this->mOSG->trackball->setDistance(-1);
+	//	mOSG->getViewer()->getCamera()->setViewMatrix( osg::Matrixd::inverse(this->photoMatrixArray[seq]));
+	//	this->mOSG->getViewer()->setCameraManipulator(mOSG->trackball.get());
+		
+		return true;
+	}
+	else
+		return false;
+}
+
+
+void CosgViewView::hideAll(void)
+{
+	for(int i=0;i<this->photoMatrixArray.size();i++){
+		auto t=this->textNode->getChild(i);
+		t->setNodeMask(0x0);
+	}
 }
